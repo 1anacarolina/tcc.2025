@@ -1,0 +1,56 @@
+<h1>Lista de Vendas</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Valor Total</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% vendas.forEach(venda => { %>
+            <tr>
+                <td><%= venda.data_vendas %></td> <!-- Corrigido para 'venda.data_vendas' -->
+                <td><%= venda.valor_total %></td> <!-- Corrigido para 'venda.valor_total' -->
+                <td>
+                    <a href="/vendas/<%= venda.id %>" class="btn btn-primary">Ver</a>
+                    <a href="/vendas/<%= venda.id %>/edit" class="btn btn-warning">Editar</a>
+                    <form action="/vendas/<%= venda.id %>?_method=DELETE" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+
+<script>
+    document.getElementById('search').addEventListener('input', function() {
+        const searchValue = this.value;
+
+        fetch(`/vendas/search?search=${encodeURIComponent(searchValue)}`)
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('vendasTableBody');
+                tbody.innerHTML = ''; // Limpar as linhas existentes
+
+                data.vendas.forEach(venda => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${venda.data}</td>
+                        <td>${venda.valor}</td>
+                        <td>
+                            <a href="/vendas/${venda.id}" class="btn btn-primary">Ver</a>
+                            <a href="/vendas/${venda.id}/edit" class="btn btn-warning">Editar</a>
+                            <form action="/vendas/${venda.id}?_method=DELETE" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-danger">Excluir</button>
+                            </form>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
